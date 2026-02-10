@@ -4,26 +4,27 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '~/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple/50 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        default: 'bg-gray-800 text-text-primary hover:bg-gray-700 border border-border-light-alpha',
+        primary: 'bg-accent-purple text-white hover:bg-accent-purple-hover',
+        success: 'bg-accent-green text-white hover:bg-accent-green-hover',
         destructive:
-          'bg-surface-destructive text-destructive-foreground hover:bg-surface-destructive-hover',
+          'bg-surface-destructive text-white hover:bg-surface-destructive-hover',
         outline:
-          'text-text-primary border border-border-light bg-transparent hover:bg-accent hover:text-accent-foreground',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-surface-hover hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
-        // hardcoded text color because of WCAG contrast issues (text-white)
-        submit: 'bg-surface-submit text-white hover:bg-surface-submit-hover',
+          'text-text-primary border border-border-medium-alpha bg-transparent hover:bg-gray-875',
+        secondary: 'bg-gray-850 text-text-secondary hover:bg-gray-800',
+        ghost: 'hover:bg-gray-850 text-text-secondary',
+        link: 'text-accent-purple underline-offset-4 hover:underline hover:text-accent-purple-hover',
+        submit: 'bg-accent-green text-white hover:bg-accent-green-hover',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-lg px-3',
-        lg: 'h-11 rounded-lg px-8',
-        icon: 'size-10',
+        default: 'h-9 px-4 py-2',
+        sm: 'h-8 px-3 text-xs',
+        lg: 'h-10 px-6',
+        icon: 'size-9',
       },
     },
     defaultVariants: {
