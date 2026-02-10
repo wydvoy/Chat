@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useMediaQuery } from '@librechat/client';
 import type { ContextType } from '~/common';
 import {
@@ -21,6 +22,8 @@ import { Nav, MobileNav, NAV_WIDTH } from '~/components/Nav';
 import { TermsAndConditionsModal } from '~/components/ui';
 import { useHealthCheck } from '~/data-provider';
 import { Banner } from '~/components/Banners';
+import { WorkspaceLayout } from '~/components/Workspace/WorkspaceLayout';
+import store from '~/store';
 
 export default function Root() {
   const [showTerms, setShowTerms] = useState(false);
@@ -32,6 +35,9 @@ export default function Root() {
 
   const { isAuthenticated, logout } = useAuthContext();
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
+
+  // Check if workspace layout is enabled
+  const enableWorkspaceLayout = useRecoilValue(store.enableWorkspaceLayout);
 
   // Global health check - runs once per authenticated session
   useHealthCheck(isAuthenticated);
@@ -73,27 +79,37 @@ export default function Root() {
           <AgentsMapContext.Provider value={agentsMap}>
             <PromptGroupsProvider>
               <Banner onHeightChange={setBannerHeight} />
-              <div className="flex" style={{ height: `calc(100dvh - ${bannerHeight}px)` }}>
-                <div className="relative z-0 flex h-full w-full overflow-hidden">
-                  <Nav navVisible={navVisible} setNavVisible={setNavVisible} />
-                  <div
-                    className="relative flex h-full max-w-full flex-1 flex-col overflow-hidden"
-                    style={
-                      isSmallScreen
-                        ? {
-                            transform: navVisible
-                              ? `translateX(${NAV_WIDTH.MOBILE}px)`
-                              : 'translateX(0)',
-                            transition: 'transform 0.2s ease-out',
-                          }
-                        : undefined
-                    }
-                  >
-                    <MobileNav navVisible={navVisible} setNavVisible={setNavVisible} />
+              {enableWorkspaceLayout ? (
+                // New Workspace Layout
+                <div style={{ height: `calc(100dvh - ${bannerHeight}px)` }}>
+                  <WorkspaceLayout>
                     <Outlet context={{ navVisible, setNavVisible } satisfies ContextType} />
+                  </WorkspaceLayout>
+                </div>
+              ) : (
+                // Traditional Layout
+                <div className="flex" style={{ height: `calc(100dvh - ${bannerHeight}px)` }}>
+                  <div className="relative z-0 flex h-full w-full overflow-hidden">
+                    <Nav navVisible={navVisible} setNavVisible={setNavVisible} />
+                    <div
+                      className="relative flex h-full max-w-full flex-1 flex-col overflow-hidden"
+                      style={
+                        isSmallScreen
+                          ? {
+                              transform: navVisible
+                                ? `translateX(${NAV_WIDTH.MOBILE}px)`
+                                : 'translateX(0)',
+                              transition: 'transform 0.2s ease-out',
+                            }
+                          : undefined
+                      }
+                    >
+                      <MobileNav navVisible={navVisible} setNavVisible={setNavVisible} />
+                      <Outlet context={{ navVisible, setNavVisible } satisfies ContextType} />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </PromptGroupsProvider>
           </AgentsMapContext.Provider>
           {config?.interface?.termsOfService?.modalAcceptance === true && (
